@@ -1,33 +1,22 @@
 const express = require('express');
-const mongoClient = require('mongodb').MongoClient;
+const databaseLibrary = require("./db");
 const app = express();
 const PORT = 8080;
-
-const uri = 'mongodb+srv://kpsokol1:1oQ4naFb5MYmG97G@cs495.odlc8ws.mongodb.net/?retryWrites=true&w=majority';
-
-async function connect(){
-  try{
-    await mongoClient.connect(uri);
-    console.log("Connected to MongoDB");
-  }catch (error){
-    console.error(error);
-  }
-}
-
-connect();
+const uri = 'mongodb+srv://kpsokol1:1oQ4naFb5MYmG97G@cs495.odlc8ws.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+const {MongoClient} = require('mongodb');
 
 app.use(express.json());
-
 app.listen(
     PORT,
     () => console.log(`I'm alive on http://localhost:${PORT}`)
 );
 
-app.get('/tshirt', (req,res) => {
-  res.status(200).send({
-    id: 1,
-    color: 'red'
-  })
+app.get('/tshirt', async (req,res) => {
+  let queryResponse = await databaseLibrary.queryDatabase("db","user", {fname: "John"});
+  console.log(queryResponse);
+  res.status(200).send(
+      queryResponse
+  );
 });
 
 app.post('/tshirt/:id',(req,res) => {
